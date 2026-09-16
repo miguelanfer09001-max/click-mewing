@@ -23,6 +23,29 @@
             height: 100vh;
             user-select: none;
             overflow: hidden;
+            transition: background-color 1s ease;
+        }
+
+        /* BOTÓN DE MÚSICA */
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
+            transition: 0.2s;
+        }
+
+        .music-btn:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-blue);
         }
 
         /* COLUMNA IZQUIERDA: EL CLICKER */
@@ -34,6 +57,7 @@
             justify-content: center;
             padding: 20px;
             border-right: 2px solid var(--neon-green);
+            position: relative;
         }
 
         h1 {
@@ -42,35 +66,41 @@
             text-shadow: 0 0 10px var(--neon-blue);
             margin-bottom: 5px;
             text-align: center;
+            transition: text-shadow 0.3s;
         }
 
         .points-display {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: bold;
             color: #fff;
             margin: 10px 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            transition: transform 0.1s;
         }
 
         .stats-text {
             color: var(--neon-green);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 20px;
+            font-weight: bold;
         }
 
         .img-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 320px;
+            height: 320px;
             border: 5px solid var(--neon-blue);
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 0 30px rgba(102, 252, 241, 0.4);
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.05s, box-shadow 0.2s;
+            z-index: 10;
         }
 
         .img-container:active {
-            transform: scale(0.93);
+            transform: scale(0.90);
+            box-shadow: 0 0 50px var(--accent);
         }
 
         .img-container img {
@@ -80,20 +110,38 @@
             pointer-events: none;
         }
 
-        /* TEXTO FLOTANTE AL HACER CLIC */
+        /* ANIMACIONES DE PARTÍCULAS */
         .floating-text {
             position: absolute;
-            color: #fff;
-            font-weight: bold;
-            font-size: 1.5rem;
-            text-shadow: 0 0 5px #000;
+            font-weight: 900;
+            font-size: 2rem;
             pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
+            animation: explode 0.8s ease-out forwards;
+            z-index: 20;
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-60px) scale(1.4); }
+        @keyframes explode {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+            50% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(var(--rot)); }
+            100% { opacity: 0; transform: translate(var(--tx), calc(var(--ty) - 50px)) scale(1) rotate(var(--rot)); }
+        }
+
+        /* EFECTO DE DESTELLO EN COMPRAS */
+        .flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        @keyframes flashAnim {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; }
         }
 
         /* BOTÓN DE EVOLUCIÓN */
@@ -105,11 +153,16 @@
             font-size: 1.2rem;
             font-weight: bold;
             border-radius: 10px;
-            margin-top: 30px;
+            margin-top: 40px;
             cursor: pointer;
             box-shadow: 0 0 15px var(--accent);
             text-transform: uppercase;
-            transition: 0.2s;
+            transition: all 0.2s;
+        }
+
+        .btn-evolve:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ff5e00;
         }
 
         .btn-evolve:disabled {
@@ -117,73 +170,92 @@
             color: #777;
             box-shadow: none;
             cursor: not-allowed;
+            transform: none;
         }
 
         /* COLUMNA DERECHA: LA TIENDA */
         .shop-section {
-            width: 400px;
+            width: 420px;
             background-color: var(--panel-bg);
             padding: 20px;
             overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
         }
 
         .shop-title {
             color: var(--accent);
-            font-size: 1.8rem;
+            font-size: 2rem;
             text-align: center;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 15px;
             margin-top: 0;
+            text-shadow: 0 0 10px var(--accent);
         }
 
         .shop-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--neon-green);
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--neon-green);
+            border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: transform 0.1s, background-color 0.2s, box-shadow 0.2s;
         }
 
-        .shop-item:hover {
-            background: rgba(102, 252, 241, 0.1);
+        .shop-item:hover:not(.disabled) {
+            background: rgba(102, 252, 241, 0.15);
+            box-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
+            transform: translateX(-5px);
         }
 
         .shop-item.disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
+            border-color: #555;
+        }
+
+        .shop-item.purchased {
+            animation: purchaseBump 0.3s ease;
+            background-color: rgba(57, 255, 20, 0.3) !important;
+            border-color: #39ff14 !important;
+        }
+
+        @keyframes purchaseBump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px #39ff14; }
+            100% { transform: scale(1); }
         }
 
         .item-info h3 {
             margin: 0 0 5px 0;
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
 
         .item-info p {
             margin: 0;
-            color: var(--text-color);
-            font-size: 0.9rem;
+            color: var(--neon-blue);
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         .item-cost {
             font-weight: bold;
             color: var(--accent);
-            margin-top: 5px;
+            margin-top: 8px;
+            font-size: 1.1rem;
         }
 
         .item-count {
-            font-size: 2rem;
-            color: var(--neon-blue);
-            font-weight: bold;
-            opacity: 0.8;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 900;
         }
 
-        /* RESPONSIVE MÓVIL */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow: auto; }
             .shop-section { width: 100%; box-sizing: border-box; }
@@ -192,8 +264,19 @@
 </head>
 <body>
 
+    <!-- REPRODUCTOR DE MÚSICA (OCULTO) -->
+    <audio id="bg-music" loop>
+        <source src="phonk.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- EFECTO DE FLASH GLOBAL -->
+    <div class="flash" id="global-flash"></div>
+
     <!-- SECCIÓN DEL CLICKER -->
     <div class="clicker-section" id="click-area">
+        
+        <button id="music-toggle" class="music-btn" onclick="toggleMusic()">🎵 MÚSICA: OFF</button>
+
         <h1 id="rank-title">NIVEL 1: TOCAMORRAS BASE</h1>
         
         <div class="points-display">🤫 <span id="mewing-count">0</span> Pts</div>
@@ -201,7 +284,7 @@
             💥 <span id="damage-val">1</span> x Clic | ⚡ <span id="passive-val">0</span> x Seg
         </div>
 
-        <div class="img-container" onclick="clickMewing(event)">
+        <div class="img-container" id="main-img-container" onpointerdown="clickMewing(event)">
             <img id="chad-img" src="WhatsApp Image 2026-09-16 at 10.31.37 AM.jpeg" alt="Chad">
         </div>
 
@@ -212,31 +295,45 @@
 
     <!-- SECCIÓN DE LA TIENDA -->
     <div class="shop-section">
-        <h2 class="shop-title">TIENDA NEÓN</h2>
+        <h2 class="shop-title">MEJORAS SIGMA</h2>
         <div id="shop-container">
-            <!-- Los items de la tienda se cargan con JS -->
+            <!-- La tienda se carga con JS -->
         </div>
     </div>
 
     <script>
-        // VARIABLES GLOBALES
         let puntos = 0;
         let danoClic = 1;
         let pasivoSeg = 0;
         let faseActual = 0;
+        
+        // CONTROL DE MÚSICA
+        let musicaIniciada = false;
+        const reproductor = document.getElementById("bg-music");
+        reproductor.volume = 0.5; // Volumen al 50% para que no sature
 
-        // FASES DE EVOLUCIÓN (Usando tus fotos)
+        function toggleMusic() {
+            const btn = document.getElementById("music-toggle");
+            if (reproductor.paused) {
+                reproductor.play();
+                btn.innerText = "🎵 MÚSICA: ON";
+                musicaIniciada = true;
+            } else {
+                reproductor.pause();
+                btn.innerText = "🎵 MÚSICA: OFF";
+            }
+        }
+
         const fases = [
-            { id: 1, titulo: "NIVEL 1: TOCAMORRAS BASE", costo: 500, foto: "WhatsApp Image 2026-09-16 at 10.31.37 AM.jpeg" },
-            { id: 2, titulo: "NIVEL 2: SIGMA MEWING", costo: 2500, foto: "WhatsApp Image 2026-09-16 at 10.31.36 AM.jpeg" },
-            { id: 3, titulo: "NIVEL 3: SUPER SAIYAYIN CHAD", costo: 15000, foto: "WhatsApp Image 2026-09-16 at 10.31.35 AM.jpeg" },
-            { id: 4, titulo: "NIVEL 4: CHAD SUPREMO CYBERPUNK", costo: 50000, foto: "WhatsApp Image 2026-09-16 at 10.31.34 AM.jpeg" },
-            { id: 5, titulo: "NIVEL 5: SKIBIDI TOILET RIZZ", costo: 250000, foto: "WhatsApp Image 2026-09-16 at 10.31.34 AM (1).jpeg" },
-            { id: 6, titulo: "NIVEL 6: EL 67 BOY", costo: 1000000, foto: "WhatsApp Image 2026-09-16 at 10.31.33 AM.jpeg" },
-            { id: 7, titulo: "NIVEL MÁX: DIOS SUPREMO VIRGEN", costo: 0, foto: "WhatsApp Image 2026-09-16 at 10.31.32 AM.jpeg" }
+            { id: 1, titulo: "NIVEL 1: TOCAMORRAS BASE", costo: 500, foto: "WhatsApp Image 2026-09-16 at 10.31.37 AM.jpeg", bg: "#0b0c10" },
+            { id: 2, titulo: "NIVEL 2: SIGMA MEWING", costo: 2500, foto: "WhatsApp Image 2026-09-16 at 10.31.36 AM.jpeg", bg: "#1a0b1c" },
+            { id: 3, titulo: "NIVEL 3: SUPER SAIYAYIN CHAD", costo: 15000, foto: "WhatsApp Image 2026-09-16 at 10.31.35 AM.jpeg", bg: "#1c1700" },
+            { id: 4, titulo: "NIVEL 4: CHAD SUPREMO CYBERPUNK", costo: 50000, foto: "WhatsApp Image 2026-09-16 at 10.31.34 AM.jpeg", bg: "#001b1c" },
+            { id: 5, titulo: "NIVEL 5: SKIBIDI TOILET RIZZ", costo: 250000, foto: "WhatsApp Image 2026-09-16 at 10.31.34 AM (1).jpeg", bg: "#1c0000" },
+            { id: 6, titulo: "NIVEL 6: EL 67 BOY", costo: 1000000, foto: "WhatsApp Image 2026-09-16 at 10.31.33 AM.jpeg", bg: "#05001c" },
+            { id: 7, titulo: "NIVEL MÁX: DIOS SUPREMO VIRGEN", costo: 0, foto: "WhatsApp Image 2026-09-16 at 10.31.32 AM.jpeg", bg: "#ffffff" }
         ];
 
-        // SISTEMA DE TIENDA (Mejoras Progresivas)
         const mejoras = [
             { id: 0, nombre: "Dedos de Acero", desc: "+1 Clic", tipo: "clic", valor: 1, costoBase: 15, costoActual: 15, comprados: 0 },
             { id: 1, nombre: "Chicle Neón", desc: "+2 Auto/seg", tipo: "auto", valor: 2, costoBase: 50, costoActual: 50, comprados: 0 },
@@ -247,44 +344,71 @@
             { id: 6, nombre: "Gafas del 67", desc: "+2500 Clic", tipo: "clic", valor: 2500, costoBase: 150000, costoActual: 150000, comprados: 0 }
         ];
 
-        // FUNCIONES PRINCIPALES
+        const particleColors = ['#ff007f', '#00f3ff', '#ffe600', '#39ff14', '#ffffff'];
+
         function clickMewing(e) {
+            // Arrancar música al primer clic
+            if (!musicaIniciada) {
+                reproductor.play().catch(()=>console.log("Esperando interacción para audio"));
+                document.getElementById("music-toggle").innerText = "🎵 MÚSICA: ON";
+                musicaIniciada = true;
+            }
+
             puntos += danoClic;
-            crearTextoFlotante(e);
+            crearParticula(e);
+            animarPuntaje();
             actualizarUI();
         }
 
-        function crearTextoFlotante(e) {
-            const container = document.querySelector('.img-container');
+        function animarPuntaje() {
+            const puntaje = document.querySelector('.points-display');
+            puntaje.style.transform = 'scale(1.1)';
+            setTimeout(() => puntaje.style.transform = 'scale(1)', 50);
+        }
+
+        function crearParticula(e) {
+            const container = document.getElementById('main-img-container');
             const rect = container.getBoundingClientRect();
-            const text = document.createElement('div');
             
+            const text = document.createElement('div');
             text.className = 'floating-text';
             text.innerText = `+${danoClic}`;
             
-            // Randomizar un poco la posición
-            let x = (e.clientX - rect.left) + (Math.random() * 20 - 10);
-            let y = (e.clientY - rect.top) + (Math.random() * 20 - 10);
+            const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+            text.style.color = color;
+            text.style.textShadow = `0 0 10px ${color}, 0 0 20px #000`;
 
-            text.style.left = `${x}px`;
-            text.style.top = `${y}px`;
+            let startX = e.clientX - rect.left;
+            let startY = e.clientY - rect.top;
+
+            const tx = (Math.random() * 150 - 75) + 'px';
+            const ty = (Math.random() * -100 - 50) + 'px';
+            const rot = (Math.random() * 60 - 30) + 'deg';
+
+            text.style.left = `${startX}px`;
+            text.style.top = `${startY}px`;
+            
+            text.style.setProperty('--tx', tx);
+            text.style.setProperty('--ty', ty);
+            text.style.setProperty('--rot', rot);
 
             container.appendChild(text);
             setTimeout(() => text.remove(), 800);
         }
 
-        function comprarMejora(index) {
+        function comprarMejora(index, divElement) {
             const item = mejoras[index];
             if (puntos >= item.costoActual) {
                 puntos -= item.costoActual;
                 item.comprados++;
                 
-                // Aumentar precio en un 15% cada que compras
                 item.costoActual = Math.ceil(item.costoActual * 1.15);
 
-                // Aplicar la mejora
                 if (item.tipo === "clic") danoClic += item.valor;
                 if (item.tipo === "auto") pasivoSeg += item.valor;
+
+                divElement.classList.add('purchased');
+                setTimeout(() => divElement.classList.remove('purchased'), 300);
 
                 renderizarTienda();
                 actualizarUI();
@@ -300,12 +424,17 @@
                 const nuevaFase = fases[faseActual];
                 document.getElementById("rank-title").innerText = nuevaFase.titulo;
                 document.getElementById("chad-img").src = nuevaFase.foto;
-                
+                document.body.style.backgroundColor = nuevaFase.bg;
+
+                const flash = document.getElementById("global-flash");
+                flash.style.animation = 'none';
+                flash.offsetHeight;
+                flash.style.animation = 'flashAnim 1s ease-out';
+
                 actualizarUI();
             }
         }
 
-        // BUCLE DE INGRESO PASIVO (1 vez por segundo)
         setInterval(() => {
             if (pasivoSeg > 0) {
                 puntos += pasivoSeg;
@@ -313,16 +442,17 @@
             }
         }, 1000);
 
-        // FUNCIONES DE INTERFAZ
         function renderizarTienda() {
             const container = document.getElementById("shop-container");
-            container.innerHTML = ""; // Limpiar tienda
+            container.innerHTML = "";
 
             mejoras.forEach((item, index) => {
                 const div = document.createElement("div");
-                // Si no tiene puntos, la clase 'disabled' la opaca
                 div.className = `shop-item ${puntos < item.costoActual ? 'disabled' : ''}`;
-                div.onclick = () => comprarMejora(index);
+                
+                div.onclick = () => {
+                    if (puntos >= item.costoActual) comprarMejora(index, div);
+                };
 
                 div.innerHTML = `
                     <div class="item-info">
@@ -337,12 +467,10 @@
         }
 
         function actualizarUI() {
-            // Actualizar contadores
             document.getElementById("mewing-count").innerText = Math.floor(puntos);
             document.getElementById("damage-val").innerText = danoClic;
             document.getElementById("passive-val").innerText = pasivoSeg;
 
-            // Revisar botón de Evolución
             const btnEvolve = document.getElementById("btn-evolve");
             if (faseActual >= fases.length - 1) {
                 btnEvolve.innerText = "¡NIVEL DIOS ALCANZADO!";
@@ -353,13 +481,11 @@
                 btnEvolve.disabled = puntos < proxFase.costo;
             }
 
-            // Repintar tienda para apagar/prender botones según los puntos
             renderizarTienda();
         }
 
-        // INICIAR
         renderizarTienda();
         actualizarUI();
     </script>
 </body>
-</html>  
+</html>
