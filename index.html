@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAD CLICKER 2077</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --panel-bg: #1f2833;
+            --text-color: #c5c6c7;
+            --neon-blue: #66fcf1;
+            --neon-green: #45a29e;
+            --accent: #ff007f;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        /* COLUMNA IZQUIERDA: EL CLICKER */
+        .clicker-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-right: 2px solid var(--neon-green);
+        }
+
+        h1 {
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .points-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 10px 0;
+        }
+
+        .stats-text {
+            color: var(--neon-green);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .img-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 5px solid var(--neon-blue);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(102, 252, 241, 0.4);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .img-container:active {
+            transform: scale(0.93);
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        /* TEXTO FLOTANTE AL HACER CLIC */
+        .floating-text {
+            position: absolute;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px #000;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.4); }
+        }
+
+        /* BOTÓN DE EVOLUCIÓN */
+        .btn-evolve {
+            background: linear-gradient(45deg, var(--accent), #ff5e00);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-top: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--accent);
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .btn-evolve:disabled {
+            background: #333;
+            color: #777;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* COLUMNA DERECHA: LA TIENDA */
+        .shop-section {
+            width: 400px;
+            background-color: var(--panel-bg);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .shop-title {
+            color: var(--accent);
+            font-size: 1.8rem;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--neon-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .shop-item:hover {
+            background: rgba(102, 252, 241, 0.1);
+        }
+
+        .shop-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .item-info h3 {
+            margin: 0 0 5px 0;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .item-info p {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .item-cost {
+            font-weight: bold;
+            color: var(--accent);
+            margin-top: 5px;
+        }
+
+        .item-count {
+            font-size: 2rem;
+            color: var(--neon-blue);
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        /* RESPONSIVE MÓVIL */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+            .shop-section { width: 100%; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECCIÓN DEL CLICKER -->
+    <div class="clicker-section" id="click-area">
+        <h1 id="rank-title">NIVEL 1: TOCAMORRAS BASE</h1>
+        
+        <div class="points-display">🤫 <span id="mewing-count">0</span> Pts</div>
+        <div class="stats-text">
+            💥 <span id="damage-val">1</span> x Clic | ⚡ <span id="passive-val">0</span> x Seg
+        </div>
+
+        <div class="img-container" onclick="clickMewing(event)">
+            <img id="chad-img" src="WhatsApp Image 2026-09-16 at 10.31.37 AM.jpeg" alt="Chad">
+        </div>
+
+        <button class="btn-evolve" id="btn-evolve" onclick="evolucionarFase()" disabled>
+            EVOLUCIONAR (Cuesta 500 Pts)
+        </button>
+    </div>
+
+    <!-- SECCIÓN DE LA TIENDA -->
+    <div class="shop-section">
+        <h2 class="shop-title">TIENDA NEÓN</h2>
+        <div id="shop-container">
+            <!-- Los items de la tienda se cargan con JS -->
+        </div>
+    </div>
+
+    <script>
+        // VARIABLES GLOBALES
+        let puntos = 0;
+        let danoClic = 1;
+        let pasivoSeg = 0;
+        let faseActual = 0;
+
+        // FASES DE EVOLUCIÓN (Usando tus fotos)
+        const fases = [
+            { id: 1, titulo: "NIVEL 1: TOCAMORRAS BASE", costo: 500, foto: "WhatsApp Image 2026-09-16 at 10.31.37 AM.jpeg" },
+            { id: 2, titulo: "NIVEL 2: SIGMA MEWING", costo: 2500, foto: "WhatsApp Image 2026-09-16 at 10.31.36 AM.jpeg" },
+            { id: 3, titulo: "NIVEL 3: SUPER SAIYAYIN CHAD", costo: 15000, foto: "WhatsApp Image 2026-09-16 at 10.31.35 AM.jpeg" },
+            { id: 4, titulo: "NIVEL 4: CHAD SUPREMO CYBERPUNK", costo: 50000, foto: "WhatsApp Image 2026-09-16 at 10.31.34 AM.jpeg" },
+            { id: 5, titulo: "NIVEL 5: SKIBIDI TOILET RIZZ", costo: 250000, foto: "WhatsApp Image 2026-09-16 at 10.31.34 AM (1).jpeg" },
+            { id: 6, titulo: "NIVEL 6: EL 67 BOY", costo: 1000000, foto: "WhatsApp Image 2026-09-16 at 10.31.33 AM.jpeg" },
+            { id: 7, titulo: "NIVEL MÁX: DIOS SUPREMO VIRGEN", costo: 0, foto: "WhatsApp Image 2026-09-16 at 10.31.32 AM.jpeg" }
+        ];
+
+        // SISTEMA DE TIENDA (Mejoras Progresivas)
+        const mejoras = [
+            { id: 0, nombre: "Dedos de Acero", desc: "+1 Clic", tipo: "clic", valor: 1, costoBase: 15, costoActual: 15, comprados: 0 },
+            { id: 1, nombre: "Chicle Neón", desc: "+2 Auto/seg", tipo: "auto", valor: 2, costoBase: 50, costoActual: 50, comprados: 0 },
+            { id: 2, nombre: "Pistola de Rizz", desc: "+10 Clic", tipo: "clic", valor: 10, costoBase: 200, costoActual: 200, comprados: 0 },
+            { id: 3, nombre: "Mandíbula de Titanio", desc: "+25 Auto/seg", tipo: "auto", valor: 25, costoBase: 1000, costoActual: 1000, comprados: 0 },
+            { id: 4, nombre: "Aura Sigma", desc: "+100 Clic", tipo: "clic", valor: 100, costoBase: 4000, costoActual: 4000, comprados: 0 },
+            { id: 5, nombre: "Armadura Skibidi", desc: "+500 Auto/seg", tipo: "auto", valor: 500, costoBase: 25000, costoActual: 25000, comprados: 0 },
+            { id: 6, nombre: "Gafas del 67", desc: "+2500 Clic", tipo: "clic", valor: 2500, costoBase: 150000, costoActual: 150000, comprados: 0 }
+        ];
+
+        // FUNCIONES PRINCIPALES
+        function clickMewing(e) {
+            puntos += danoClic;
+            crearTextoFlotante(e);
+            actualizarUI();
+        }
+
+        function crearTextoFlotante(e) {
+            const container = document.querySelector('.img-container');
+            const rect = container.getBoundingClientRect();
+            const text = document.createElement('div');
+            
+            text.className = 'floating-text';
+            text.innerText = `+${danoClic}`;
+            
+            // Randomizar un poco la posición
+            let x = (e.clientX - rect.left) + (Math.random() * 20 - 10);
+            let y = (e.clientY - rect.top) + (Math.random() * 20 - 10);
+
+            text.style.left = `${x}px`;
+            text.style.top = `${y}px`;
+
+            container.appendChild(text);
+            setTimeout(() => text.remove(), 800);
+        }
+
+        function comprarMejora(index) {
+            const item = mejoras[index];
+            if (puntos >= item.costoActual) {
+                puntos -= item.costoActual;
+                item.comprados++;
+                
+                // Aumentar precio en un 15% cada que compras
+                item.costoActual = Math.ceil(item.costoActual * 1.15);
+
+                // Aplicar la mejora
+                if (item.tipo === "clic") danoClic += item.valor;
+                if (item.tipo === "auto") pasivoSeg += item.valor;
+
+                renderizarTienda();
+                actualizarUI();
+            }
+        }
+
+        function evolucionarFase() {
+            const fase = fases[faseActual];
+            if (puntos >= fase.costo && faseActual < fases.length - 1) {
+                puntos -= fase.costo;
+                faseActual++;
+                
+                const nuevaFase = fases[faseActual];
+                document.getElementById("rank-title").innerText = nuevaFase.titulo;
+                document.getElementById("chad-img").src = nuevaFase.foto;
+                
+                actualizarUI();
+            }
+        }
+
+        // BUCLE DE INGRESO PASIVO (1 vez por segundo)
+        setInterval(() => {
+            if (pasivoSeg > 0) {
+                puntos += pasivoSeg;
+                actualizarUI();
+            }
+        }, 1000);
+
+        // FUNCIONES DE INTERFAZ
+        function renderizarTienda() {
+            const container = document.getElementById("shop-container");
+            container.innerHTML = ""; // Limpiar tienda
+
+            mejoras.forEach((item, index) => {
+                const div = document.createElement("div");
+                // Si no tiene puntos, la clase 'disabled' la opaca
+                div.className = `shop-item ${puntos < item.costoActual ? 'disabled' : ''}`;
+                div.onclick = () => comprarMejora(index);
+
+                div.innerHTML = `
+                    <div class="item-info">
+                        <h3>${item.nombre}</h3>
+                        <p>${item.desc}</p>
+                        <div class="item-cost">Cuesta: ${item.costoActual} Pts</div>
+                    </div>
+                    <div class="item-count">${item.comprados}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function actualizarUI() {
+            // Actualizar contadores
+            document.getElementById("mewing-count").innerText = Math.floor(puntos);
+            document.getElementById("damage-val").innerText = danoClic;
+            document.getElementById("passive-val").innerText = pasivoSeg;
+
+            // Revisar botón de Evolución
+            const btnEvolve = document.getElementById("btn-evolve");
+            if (faseActual >= fases.length - 1) {
+                btnEvolve.innerText = "¡NIVEL DIOS ALCANZADO!";
+                btnEvolve.disabled = true;
+            } else {
+                const proxFase = fases[faseActual];
+                btnEvolve.innerText = `EVOLUCIONAR (Cuesta ${proxFase.costo} Pts)`;
+                btnEvolve.disabled = puntos < proxFase.costo;
+            }
+
+            // Repintar tienda para apagar/prender botones según los puntos
+            renderizarTienda();
+        }
+
+        // INICIAR
+        renderizarTienda();
+        actualizarUI();
+    </script>
+</body>
+</html>  
